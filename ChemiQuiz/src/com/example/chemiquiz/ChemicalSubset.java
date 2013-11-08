@@ -1,9 +1,10 @@
-package com.example.chemiquiz;
+ 	package com.example.chemiquiz;
 
 import java.util.HashSet;
 
 public class ChemicalSubset {
 	public String name;
+	public int size;
 	public HashSet<Integer> chemSpiderIDs;
 	
 	public ChemicalSubset(){
@@ -29,5 +30,9 @@ public class ChemicalSubset {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public int getSize(){
+		return chemSpiderIDs.size();
 	}
 }
