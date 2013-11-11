@@ -9,14 +9,14 @@ public class SearchViewActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_subset_view);
+        setContentView(R.layout.activity_search_view);
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.subset_view, menu);
+        getMenuInflater().inflate(R.menu.search_view, menu);
         return true;
     }
     

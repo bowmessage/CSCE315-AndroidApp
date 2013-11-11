@@ -1,19 +1,19 @@
 package com.example.chemiquiz;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -23,6 +23,7 @@ public class SubsetViewActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subset_view);
+
         
         final ArrayList<ChemicalSubset> subsets = new ArrayList<ChemicalSubset>();
         subsets.add(new ChemicalSubset("test1"));
@@ -57,11 +58,23 @@ public class SubsetViewActivity extends Activity {
       }
 
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.subset_view, menu);
         return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add:
+            	startActivity(new Intent(this, SearchViewActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
     
 }
