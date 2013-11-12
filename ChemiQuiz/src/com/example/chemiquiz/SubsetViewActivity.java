@@ -43,15 +43,7 @@ public class SubsetViewActivity extends Activity {
           public void onItemClick(AdapterView<?> parent, final View view,
               int position, long id) {
             final ChemicalSubset item = (ChemicalSubset) parent.getItemAtPosition(position);
-            /*view.animate().setDuration(2000).alpha(0)
-                .withEndAction(new Runnable() {
-                  @Override
-                  public void run() {
-                	subsets.remove(item);
-                    adapter.notifyDataSetChanged();
-                    view.setAlpha(1);
-                  }
-                });*/
+            SubsetViewActivity.this.startActivity(new Intent(SubsetViewActivity.this, GameViewActivity.class));
           }
 
         });
@@ -70,7 +62,7 @@ public class SubsetViewActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add:
-            	startActivity(new Intent(this, SearchViewActivity.class));
+            	startActivity(new Intent(this, SubsetEditActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
