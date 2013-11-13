@@ -4,8 +4,8 @@ import junit.framework.Assert;
 import android.content.Context;
 import android.content.Intent;
 import android.test.ActivityUnitTestCase;
-import com.example.chemiquiz.R;
 
+import com.example.chemiquiz.R;
 import com.example.chemiquiz.SubsetViewActivity;
 
 public class SubsetViewTest extends ActivityUnitTestCase<SubsetViewActivity> {
