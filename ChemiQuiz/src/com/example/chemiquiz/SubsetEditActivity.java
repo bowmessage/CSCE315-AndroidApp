@@ -43,8 +43,8 @@ public class SubsetEditActivity extends Activity {
           @Override
           public void onItemClick(AdapterView<?> parent, final View view,
               int position, long id) {
-            final ChemicalSubset item = (ChemicalSubset) parent.getItemAtPosition(position);
-            SubsetEditActivity.this.startActivity(new Intent(SubsetEditActivity.this, GameViewActivity.class));
+            final int item = (Integer) parent.getItemAtPosition(position);
+            SubsetEditActivity.this.startActivity(new Intent(SubsetEditActivity.this, DetailViewActivity.class));
           }
 
         });
