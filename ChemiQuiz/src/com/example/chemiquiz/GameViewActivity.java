@@ -1,30 +1,41 @@
 package com.example.chemiquiz;
 
-import android.os.Bundle;
-import android.app.Activity;
-import android.view.Menu;
-import java.util.vector;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Random;
+
+import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.view.Menu;
+import android.widget.Button;
+import android.widget.ImageView;
 
 public class GameViewActivity extends Activity {
 
-	vector<String> id_numbers;
-	string this_id;
+	ArrayList<Integer> id_numbers;
+	int this_id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        id_numbers = populateIDs(randomNumbers(13200000, 10));
+        id_numbers = randomNumbers(13200000, 10);
         Random r = new Random();
-        this_id = id_number[r.nextInt(id_numbers.size())];
+        this_id = id_numbers.get(r.nextInt(id_numbers.size()));
         
-        ImageView imageView1 = findViewById(R.id.imageView1);
-        android.widget.Button button1 = (android.widget.Button)findViewById(R.id.button01);
-        android.widget.Button button2 = (android.widget.Button)findViewById(R.id.button02);
-        android.widget.Button button3 = (android.widget.Button)findViewById(R.id.button03);
-        android.widget.Button button4 = (android.widget.Button)findViewById(R.id.button04);
+        ImageView imageView1 = (ImageView) findViewById(R.id.imageView1);
+        Button button1 = (android.widget.Button)findViewById(R.id.Button01);
+        Button button2 = (android.widget.Button)findViewById(R.id.Button02);
+        Button button3 = (android.widget.Button)findViewById(R.id.Button03);
+        Button button4 = (android.widget.Button)findViewById(R.id.Button04);
         
-        vector<android.widget.Button> buttons;
+        ArrayList<Button> buttons = new ArrayList<Button>();
         buttons.add(button1);
         buttons.add(button2);
         buttons.add(button3);
@@ -34,18 +45,11 @@ public class GameViewActivity extends Activity {
         setContentView(R.layout.game_view);
     }
     
-    void setComps(ImageView view, vector<android.widget.Button> buttons){
-    	Random r = new Random(3);
-    	view = 
+    void setComps(ImageView view, ArrayList<android.widget.Button> buttons){
+    	//Random r = new Random(3);
+    	//view = 
     }
     
-    vector<String> populateIDs(vector<int> set){
-    	vector<String> ret;
-    	for(int i = 0; i < set.size(); i++){
-    		ret.add(set[i].toString());
-    	}
-    	return ret;
-    }
     
    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -54,11 +58,11 @@ public class GameViewActivity extends Activity {
         return true;
     }
    
-   vector<int> randomNumbers(int max, int size){
-	   Random generator = new Random(max);
-	   vector<int> ret;
+   ArrayList<Integer> randomNumbers(int max, int size){
+	   ArrayList<Integer> ret = new ArrayList<Integer>();
 	   for(int i = 0; i < size; i++){
-		   ret.add(generator.nextInt());
+		   Random r = new Random();
+		   ret.add(r.nextInt(max));
 	   }
 	   return ret;
    }
