@@ -9,7 +9,7 @@
     tools:context=".SubsetViewActivity" >
 
     <ListView
-        android:id="@+id/subsetViewsubsetList"
+        android:id="@+id/subsetEditChemicalList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"

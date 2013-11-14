@@ -26,7 +26,10 @@ public class SubsetViewActivity extends Activity {
 
         
         final ArrayList<ChemicalSubset> subsets = new ArrayList<ChemicalSubset>();
-        subsets.add(new ChemicalSubset("test1"));
+        ChemicalSubset test1 = new ChemicalSubset("test1");
+        test1.add(324);
+        test1.add(4523);
+        subsets.add(test1);
         subsets.add(new ChemicalSubset("test2"));
         
                 
@@ -62,7 +65,9 @@ public class SubsetViewActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add:
-            	startActivity(new Intent(this, SubsetEditActivity.class));
+            	Intent editIntent = new Intent(this, SubsetEditActivity.class);
+            	editIntent.putExtra("com.exmaple.chemiquiz.EditingSubsetID", 0);
+            	startActivity(editIntent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -72,9 +77,6 @@ public class SubsetViewActivity extends Activity {
 }
 
 class SubsetArrayAdapter extends ArrayAdapter<ChemicalSubset> {
-
-    //HashMap<ChemicalSubset, Integer> idMap = new HashMap<ChemicalSubset, Integer>();
-	
 	private final Context context;
 	private final List<ChemicalSubset> values;
 
@@ -83,30 +85,15 @@ class SubsetArrayAdapter extends ArrayAdapter<ChemicalSubset> {
       super(context, textViewResourceId, objects);
       this.context = context;
       values = objects;
-      /*for (int i = 0; i < objects.size(); ++i) {
-        idMap.put(objects.get(i), i);
-      }*/
     }
-
-    /*@Override
-    public long getItemId(int position) {
-    	ChemicalSubset item = getItem(position);
-      return idMap.get(item);
-    }
-
-    @Override
-    public boolean hasStableIds() {
-      return true;
-    }*/
     
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
       LayoutInflater inflater = (LayoutInflater) context
           .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-      View rowView = inflater.inflate(R.layout.subset_list_item, parent, false);
+      View rowView = inflater.inflate(R.layout.list_item_subset, parent, false);
       TextView nameTextView = (TextView) rowView.findViewById(R.id.name);
       TextView sizeTextView = (TextView) rowView.findViewById(R.id.size);
-      //ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
       nameTextView.setText(values.get(position).getName());
       sizeTextView.setText(values.get(position).getSize() + " items"); 
 
