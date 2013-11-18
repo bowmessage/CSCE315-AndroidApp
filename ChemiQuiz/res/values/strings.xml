@@ -7,5 +7,7 @@
     <string name="action_settings">Settings</string>
     
     <string name="hello_world">Hello world!</string>
+    
+    <color name="lightGray">#ddd</color>
 
 </resources>

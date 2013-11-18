@@ -6,15 +6,21 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 public class SubsetViewActivity extends Activity {
@@ -50,6 +56,52 @@ public class SubsetViewActivity extends Activity {
           }
 
         });
+        
+        listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        	
+        	@Override
+        	public boolean onItemLongClick(AdapterView<?> parent, View anchorView,
+        			final int position, long id){
+        	    View popupView = getLayoutInflater().inflate(R.layout.popup_subset_view_longpress, null);
+
+        	    final PopupWindow popupWindow = new PopupWindow(popupView, 
+        	                           LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        	    
+        	    Button editButton = (Button) popupView.findViewById(R.id.editButton);
+        	    editButton.setOnClickListener(new OnClickListener(){
+					@Override
+					public void onClick(View v) {
+						popupWindow.dismiss();
+						Intent editIntent = new Intent(SubsetViewActivity.this, SubsetEditActivity.class);
+		            	editIntent.putExtra("com.exmaple.chemiquiz.EditingSubsetID", position);
+		            	startActivity(editIntent);
+					}
+        	    });
+        	    
+        	    Button deleteButton = (Button) popupView.findViewById(R.id.deleteButton);
+        	    deleteButton.setOnClickListener(new OnClickListener(){
+					@Override
+					public void onClick(View v) {
+						popupWindow.dismiss();
+						subsets.remove(position);
+						adapter.notifyDataSetChanged();
+					}
+        	    });
+        	    
+
+        	    popupWindow.setFocusable(true);
+        	    popupWindow.setBackgroundDrawable(new ColorDrawable());
+        	    int location[] = new int[2];
+
+        	    // Get the View's(the one that was clicked in the Fragment) location
+        	    anchorView.getLocationOnScreen(location);
+
+        	    // Using location, the PopupWindow will be displayed right under anchorView
+        	    popupWindow.showAtLocation(anchorView, Gravity.NO_GRAVITY, 
+        	                                     location[0], location[1] + anchorView.getHeight());
+        		return true;
+        	}
+		});
       }
 
 

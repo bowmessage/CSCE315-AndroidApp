@@ -46,8 +46,7 @@ public class GameViewActivity extends Activity {
     }
     
     void setComps(ImageView view, ArrayList<android.widget.Button> buttons){
-    	//Random r = new Random(3);
-    	//view = 
+    	
     }
     
     
