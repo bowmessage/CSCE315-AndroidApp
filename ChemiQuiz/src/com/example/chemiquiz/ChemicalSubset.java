@@ -1,18 +1,18 @@
  	package com.example.chemiquiz;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 
 public class ChemicalSubset {
 	public String name;
 	public int size;
-	public HashSet<Integer> chemSpiderIDs;
+	public ArrayList<Integer> chemSpiderIDs;
 	
 	public ChemicalSubset(){
-		chemSpiderIDs = new HashSet<Integer>();
+		chemSpiderIDs = new ArrayList<Integer>();
 		name = "New Subset";
 	}
 	public ChemicalSubset(String n){
-		chemSpiderIDs = new HashSet<Integer>();
+		chemSpiderIDs = new ArrayList<Integer>();
 		name = n;
 	}
 	
