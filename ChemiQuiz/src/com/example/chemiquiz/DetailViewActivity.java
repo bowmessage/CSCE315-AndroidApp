@@ -10,6 +10,11 @@ public class DetailViewActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_view);
+        
+        Bundle extras = getIntent().getExtras();
+        int chemSpiderID = extras.getInt("com.exmaple.chemiquiz.DetailChemSpiderID");
+        
+        //TextView t = (TextView)
     }
 
 

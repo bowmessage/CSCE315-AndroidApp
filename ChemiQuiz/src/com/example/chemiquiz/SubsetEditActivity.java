@@ -7,14 +7,20 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 public class SubsetEditActivity extends Activity {
@@ -26,16 +32,13 @@ public class SubsetEditActivity extends Activity {
         
         Bundle extras = getIntent().getExtras();
         int curChemicalSubsetID = extras.getInt("com.exmaple.chemiquiz.EditingSubsetID");
-        ChemicalSubset found = new ChemicalSubset("asdf111");
-        found.add(13);
-        found.add(52);
-        found.add(523);
-               
+        final ChemicalSubset cur = SubsetViewActivity.subsets.get(curChemicalSubsetID);
+
         final ListView listview = (ListView) findViewById(R.id.subsetEditChemicalList);
         
         final SubsetValuesAdapter adapter = new SubsetValuesAdapter(this,
-        	android.R.layout.simple_list_item_1, new ArrayList<Integer>(found.chemSpiderIDs));
-            //R.layout.subset_list_item, list);
+        	android.R.layout.simple_list_item_1, cur.chemSpiderIDs);
+        
         listview.setAdapter(adapter);
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -44,10 +47,40 @@ public class SubsetEditActivity extends Activity {
           public void onItemClick(AdapterView<?> parent, final View view,
               int position, long id) {
             final int item = (Integer) parent.getItemAtPosition(position);
-            SubsetEditActivity.this.startActivity(new Intent(SubsetEditActivity.this, DetailViewActivity.class));
+            Intent i = new Intent(SubsetEditActivity.this, DetailViewActivity.class);
+            i.putExtra("com.exmaple.chemiquiz.DetailChemSpiderID", item);
+            SubsetEditActivity.this.startActivity(i);
           }
 
         });
+        
+        listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        	
+        	@Override
+        	public boolean onItemLongClick(AdapterView<?> parent, View anchorView,
+        			final int position, long id){
+        	    View popupView = getLayoutInflater().inflate(R.layout.popup_subset_edit_longpress, null);
+
+        	    final PopupWindow popupWindow = new PopupWindow(popupView, 
+        	                           LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+
+        	    Button deleteButton = (Button) popupView.findViewById(R.id.deleteButton);
+        	    deleteButton.setOnClickListener(new OnClickListener(){
+					@Override
+					public void onClick(View v) {
+						popupWindow.dismiss();
+						cur.remove(position);
+						adapter.notifyDataSetChanged();
+					}
+        	    });
+        	    
+
+        	    popupWindow.setFocusable(true);
+        	    popupWindow.setBackgroundDrawable(new ColorDrawable(R.color.lightGray));
+        	    popupWindow.showAtLocation(anchorView, Gravity.CENTER, 0, 0);
+        		return true;
+        	}
+		});
       }
 
 

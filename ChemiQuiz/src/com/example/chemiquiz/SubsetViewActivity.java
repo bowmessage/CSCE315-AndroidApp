@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,12 +20,16 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
 public class SubsetViewActivity extends Activity {
+	
+	public static ArrayList<ChemicalSubset> subsets;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +37,7 @@ public class SubsetViewActivity extends Activity {
         setContentView(R.layout.activity_subset_view);
 
         
-        final ArrayList<ChemicalSubset> subsets = new ArrayList<ChemicalSubset>();
+        subsets = new ArrayList<ChemicalSubset>();
         ChemicalSubset test1 = new ChemicalSubset("test1");
         test1.add(324);
         test1.add(4523);
@@ -90,15 +96,8 @@ public class SubsetViewActivity extends Activity {
         	    
 
         	    popupWindow.setFocusable(true);
-        	    popupWindow.setBackgroundDrawable(new ColorDrawable());
-        	    int location[] = new int[2];
-
-        	    // Get the View's(the one that was clicked in the Fragment) location
-        	    anchorView.getLocationOnScreen(location);
-
-        	    // Using location, the PopupWindow will be displayed right under anchorView
-        	    popupWindow.showAtLocation(anchorView, Gravity.NO_GRAVITY, 
-        	                                     location[0], location[1] + anchorView.getHeight());
+        	    popupWindow.setBackgroundDrawable(new ColorDrawable(R.color.lightGray));
+        	    popupWindow.showAtLocation(anchorView, Gravity.CENTER, 0, 0);
         		return true;
         	}
 		});
@@ -117,9 +116,47 @@ public class SubsetViewActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add:
-            	Intent editIntent = new Intent(this, SubsetEditActivity.class);
-            	editIntent.putExtra("com.exmaple.chemiquiz.EditingSubsetID", 0);
-            	startActivity(editIntent);
+        	    View popupView = getLayoutInflater().inflate(R.layout.popup_subset_view_add_subset, null);
+
+        	    final PopupWindow popupWindow = new PopupWindow(popupView, 
+        	                           LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        	    
+        	    final EditText newName = (EditText) popupView.findViewById(R.id.newSubsetName);
+        	    final Button createButton = (Button) popupView.findViewById(R.id.createButton);
+        	    createButton.setEnabled(false);
+        	    createButton.setOnClickListener(new OnClickListener(){
+					@Override
+					public void onClick(View v) {
+						popupWindow.dismiss();
+						subsets.add(new ChemicalSubset(newName.getText().toString()));
+						((BaseAdapter) ((ListView) findViewById(R.id.subsetViewsubsetList)).getAdapter()).notifyDataSetChanged();
+						Intent editIntent = new Intent(SubsetViewActivity.this, SubsetEditActivity.class);
+		            	editIntent.putExtra("com.exmaple.chemiquiz.EditingSubsetID", subsets.size()-1);
+		            	startActivity(editIntent);
+					}
+        	    });
+        	    
+        	    
+        	    newName.addTextChangedListener(new TextWatcher(){
+					@Override
+					public void afterTextChanged(Editable arg0) {
+						if(arg0.length() > 0)
+							createButton.setEnabled(true);
+						else
+							createButton.setEnabled(false);
+					}
+					@Override
+					public void beforeTextChanged(CharSequence arg0, int arg1,
+							int arg2, int arg3) {}
+					@Override
+					public void onTextChanged(CharSequence arg0, int arg1,
+							int arg2, int arg3) {}
+        	    });
+        	    
+
+        	    popupWindow.setFocusable(true);
+        	    popupWindow.setBackgroundDrawable(new ColorDrawable());
+        	    popupWindow.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
