@@ -36,15 +36,8 @@ public class SubsetViewActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subset_view);
 
-        
         subsets = new ArrayList<ChemicalSubset>();
-        ChemicalSubset test1 = new ChemicalSubset("test1");
-        test1.add(324);
-        test1.add(4523);
-        subsets.add(test1);
-        subsets.add(new ChemicalSubset("test2"));
         
-                
         final ListView listview = (ListView) findViewById(R.id.subsetViewsubsetList);
         
         final SubsetArrayAdapter adapter = new SubsetArrayAdapter(this,
