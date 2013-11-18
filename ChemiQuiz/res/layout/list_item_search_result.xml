@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:padding="6dip" >
+
+    
+    
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" >
+        
+        <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+            <TextView
+		        android:id="@+id/idNumber"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:gravity="center_vertical"
+		        android:text="Example application"
+		        android:textSize="16sp" />
+            
+            <TextView
+		        android:id="@+id/size"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:ellipsize="marquee"
+		        android:singleLine="true"
+		        android:text="Description"
+		        android:textSize="12sp" />
+		
+		    
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</RelativeLayout>
