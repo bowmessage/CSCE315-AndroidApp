@@ -24,20 +24,20 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
             <TextView
-		        android:id="@+id/idNumber"
+		        android:id="@+id/resultName"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
 		        android:gravity="center_vertical"
-		        android:text="Example application"
+		        android:text=""
 		        android:textSize="16sp" />
             
             <TextView
-		        android:id="@+id/size"
+		        android:id="@+id/resultId"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
 		        android:ellipsize="marquee"
 		        android:singleLine="true"
-		        android:text="Description"
+		        android:text=""
 		        android:textSize="12sp" />
 		
 		    

@@ -38,7 +38,7 @@ public class SubsetEditActivity extends Activity {
         final ListView listview = (ListView) findViewById(R.id.subsetEditChemicalList);
         
         final SubsetValuesAdapter adapter = new SubsetValuesAdapter(this,
-        	android.R.layout.simple_list_item_1, cur.chemSpiderIDs);
+        	android.R.layout.simple_list_item_1, cur.chemicals);
         
         listview.setAdapter(adapter);
 
@@ -107,13 +107,13 @@ public class SubsetEditActivity extends Activity {
     
 }
 
-class SubsetValuesAdapter extends ArrayAdapter<Integer> {
+class SubsetValuesAdapter extends ArrayAdapter<Chemical> {
 
 	private final Context context;
-	private final List<Integer> values;
+	private final List<Chemical> values;
 
     public SubsetValuesAdapter(Context context, int textViewResourceId,
-        List<Integer> objects) {
+        List<Chemical> objects) {
       super(context, textViewResourceId, objects);
       this.context = context;
       values = objects;
@@ -125,7 +125,7 @@ class SubsetValuesAdapter extends ArrayAdapter<Integer> {
           .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
       View rowView = inflater.inflate(R.layout.list_item_chemical, parent, false);
       TextView nameTextView = (TextView) rowView.findViewById(R.id.idNumber);
-      nameTextView.setText(values.get(position) + "");
+      nameTextView.setText(values.get(position).getName() + "");
 
       return rowView;
     }

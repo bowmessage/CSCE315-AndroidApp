@@ -15,33 +15,33 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class ChemicalSubset {
 	public String name;
 	public int size;
-	public ArrayList<Integer> chemSpiderIDs;
-	public ArrayList<String> chemNames;
+	public ArrayList<Chemical> chemicals;
 
 	public ChemicalSubset() {
-		chemSpiderIDs = new ArrayList<Integer>();
-		chemNames = new ArrayList<String>();
+		chemicals = new ArrayList<Chemical>();
 		name = "New Subset";
 	}
 
 	public ChemicalSubset(String n) {
-		chemSpiderIDs = new ArrayList<Integer>();
+		chemicals = new ArrayList<Chemical>();
 		name = n;
 	}
 
-	public void add(int i) {
-		chemSpiderIDs.add(i);
-		new GetCommonNameParser(
-				"www.chemspider.com/MassSpecAPI.asmx/GetExtendedCompoundInfo?CSID="
-						+ i + "&token=f52ab236-347f-41dd-973d-a0e6668b7e14");
+	public void add(Chemical i) {
+		chemicals.add(i);
+		new CommonNameParser(
+				"http://www.chemspider.com/MassSpecAPI.asmx/GetExtendedCompoundInfo?CSID="
+						+ i.id + "&token=f52ab236-347f-41dd-973d-a0e6668b7e14", chemicals.size()-1)
+		.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{null});
 	}
 
 	public void remove(int i) {
-		chemSpiderIDs.remove(i);
+		chemicals.remove(i);
 	}
 
 	public String getName() {
@@ -53,17 +53,19 @@ public class ChemicalSubset {
 	}
 
 	public int getSize() {
-		return chemSpiderIDs.size();
+		return chemicals.size();
 	}
 
-	public class GetCommonNameParser extends AsyncTask<String, Void, String> {
+	public class CommonNameParser extends AsyncTask<String, Void, String> {
 
 		// variables passed in:
 		String urls;
+		int indexToMod;
 
 		// constructor
-		public GetCommonNameParser(String urls) {
+		public CommonNameParser(String urls, int indexToModify) {
 			this.urls = urls;
+			indexToMod = indexToModify;
 		}
 
 		@Override
@@ -87,54 +89,8 @@ public class ChemicalSubset {
 				doc.getDocumentElement().normalize();
 
 				NodeList nodeList = doc.getElementsByTagName("CommonName");
-
-				chemNames.clear();
-
-				for (int i = 0; i < nodeList.getLength(); i++) {
-
-					chemNames.add(nodeList.item(i).getTextContent());
-
-					/*
-					 * Node node = nodeList.item(i); Element fstElmnt =
-					 * (Element) node; NodeList idList =
-					 * fstElmnt.getElementsByTagName("int"); Element nameElement
-					 * = (Element) nameList.item(0); nameList =
-					 * nameElement.getChildNodes(); title.add(""+ ((Node)
-					 * nameList.item(0)).getNodeValue());
-					 * 
-					 * System.out.println("name : "+((Node)
-					 * nameList.item(0)).getNodeValue());
-					 * 
-					 * 
-					 * Element fstElmnt1 = (Element) node; NodeList nameList1 =
-					 * fstElmnt1.getElementsByTagName("id"); Element
-					 * nameElement1 = (Element) nameList1.item(0); nameList1 =
-					 * nameElement1.getChildNodes(); description.add(""+ ((Node)
-					 * nameList1.item(0)).getNodeValue());
-					 * 
-					 * System.out.println("id : "+ ((Node)
-					 * nameList1.item(0)).getNodeValue());
-					 * 
-					 * Element fstElmnt2 = (Element) node; NodeList nameList2 =
-					 * fstElmnt2.getElementsByTagName("cost"); Element
-					 * nameElement2 = (Element) nameList2.item(0); nameList2 =
-					 * nameElement2.getChildNodes(); id.add(""+ ((Node)
-					 * nameList2.item(0)).getNodeValue());
-					 * 
-					 * System.out.println("cost : "+ ((Node)
-					 * nameList2.item(0)).getNodeValue());
-					 * 
-					 * Element fstElmnt3 = (Element) node; NodeList nameList3 =
-					 * fstElmnt3.getElementsByTagName("description"); Element
-					 * nameElement3 = (Element) nameList3.item(0); nameList3 =
-					 * nameElement3.getChildNodes(); cost.add(""+ ((Node)
-					 * nameList3.item(0)).getNodeValue());
-					 * 
-					 * System.out.println("description : "+ ((Node)
-					 * nameList3.item(0)).getNodeValue());
-					 */
-
-				}
+				Log.d("cq", nodeList.item(0).getTextContent());
+				chemicals.get(indexToMod).setName(nodeList.item(0).getTextContent());
 
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
@@ -158,5 +114,9 @@ public class ChemicalSubset {
 
 		}
 
+	}
+
+	public void clear() {
+		chemicals.clear();
 	}
 }

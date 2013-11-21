@@ -20,13 +20,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -37,13 +37,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 public class SearchViewActivity extends Activity {
 	
 	
 	ProgressDialog pDialog;
 	
-	ArrayList<Integer> resultantChemSpiderIDs;
+	ChemicalSubset resultantChemSpiderIDs;
 	ListView searchResults;
 
     @Override
@@ -51,7 +52,7 @@ public class SearchViewActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_view);
         
-        resultantChemSpiderIDs = new ArrayList<Integer>();
+        resultantChemSpiderIDs = new ChemicalSubset();
         
         
         Bundle extras = getIntent().getExtras();
@@ -59,14 +60,23 @@ public class SearchViewActivity extends Activity {
         
         
         final EditText searchVal = (EditText) findViewById(R.id.searchText);
-        ImageButton searchButton = (ImageButton) findViewById(R.id.searchButton);
+        final ImageButton searchButton = (ImageButton) findViewById(R.id.searchButton);
         final Button addButton = (Button) findViewById(R.id.addButton);
         searchResults = (ListView) findViewById(R.id.searchResults);
         
         addButton.setEnabled(false);
         
         final ResultsArrayAdapter adapter = new ResultsArrayAdapter(this,
-            	android.R.layout.simple_list_item_1, resultantChemSpiderIDs);
+            	android.R.layout.simple_list_item_1, resultantChemSpiderIDs.chemicals);
+        
+        searchVal.setOnEditorActionListener(new OnEditorActionListener(){
+			@Override
+			public boolean onEditorAction(TextView v, int actionId,
+					KeyEvent event) {
+				searchButton.performClick();
+				return true;
+			}
+        });
             
         searchResults.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         searchResults.setAdapter(adapter);
@@ -74,6 +84,7 @@ public class SearchViewActivity extends Activity {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				adapter.setSelectedState(position, !adapter.getSelectedState(position));
 				CheckBox c = (CheckBox) view.findViewById(R.id.checkBox);
 				c.toggle();
 				view.setSelected(!view.isSelected());
@@ -96,16 +107,12 @@ public class SearchViewActivity extends Activity {
         addButton.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
-				ArrayList<Integer> chemSpiderIDsSelected = new ArrayList<Integer>();
-				SparseBooleanArray valuesSelected = searchResults.getCheckedItemPositions();
-		        for (int i = 0; i < valuesSelected.size(); i++) {
-		            if(valuesSelected.valueAt(i) == true) {
-		            	SubsetViewActivity.subsets.get(curChemicalSubsetID).add(adapter.getItem(i));
-		            	//finish();
-		            	//TODO FIX THIS
-		            }
-		        }
+				for(int i = 0; i < adapter.isSelected.size(); i++) {
+					SubsetViewActivity.subsets.get(curChemicalSubsetID).add(adapter.chemicals.get(adapter.isSelected.keyAt(i)));
+				}
+				SearchViewActivity.this.finish();
 			}
+			
         });
         
         
@@ -146,7 +153,7 @@ public class SearchViewActivity extends Activity {
                 resultantChemSpiderIDs.clear();
 
                 for (int i = 0; i < nodeList.getLength(); i++) {
-                	resultantChemSpiderIDs.add(Integer.parseInt(nodeList.item(i).getTextContent()));
+                	resultantChemSpiderIDs.add(new Chemical(Integer.parseInt(nodeList.item(i).getTextContent())));
                 }
 
             } catch (MalformedURLException e) {
@@ -192,15 +199,17 @@ public class SearchViewActivity extends Activity {
 }
 
 
-class ResultsArrayAdapter extends ArrayAdapter<Integer> {
+class ResultsArrayAdapter extends ArrayAdapter<Chemical> {
 	private final Context context;
-	private final List<Integer> values;
+	public final List<Chemical> chemicals;
+	public final SparseBooleanArray isSelected;
 
     public ResultsArrayAdapter(Context context, int textViewResourceId,
-        List<Integer> objects) {
+        List<Chemical> objects) {
       super(context, textViewResourceId, objects);
       this.context = context;
-      values = objects;
+      chemicals = objects;
+      isSelected = new SparseBooleanArray();
     }
     
     @Override
@@ -208,9 +217,27 @@ class ResultsArrayAdapter extends ArrayAdapter<Integer> {
       LayoutInflater inflater = (LayoutInflater) context
           .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
       View rowView = inflater.inflate(R.layout.list_item_search_result, parent, false);
-      TextView nameTextView = (TextView) rowView.findViewById(R.id.idNumber);
-      nameTextView.setText(values.get(position) + "");
+      TextView nameTextView = (TextView) rowView.findViewById(R.id.resultName);
+      nameTextView.setText(chemicals.get(position).getName() + "");
+      TextView idTextView = (TextView) rowView.findViewById(R.id.resultId);
+      idTextView.setText(chemicals.get(position).getId() + "");
+      CheckBox cb = (CheckBox) rowView.findViewById(R.id.checkBox);
+      cb.setClickable(false);
+      if(isSelected.get(position)){
+    	  cb.setChecked(true);
+      }
       return rowView;
     }
-
+    
+    public Chemical getChemicalIdAtPosition(int position){
+    	return chemicals.get(position);
+    }
+    
+    public void setSelectedState(int index, boolean v){
+    	isSelected.put(index, v);
+    }
+    
+    public boolean getSelectedState(int index){
+    	return isSelected.get(index);
+    }
   }
