@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -25,6 +26,8 @@ import android.widget.TextView;
 public class SubsetEditActivity extends Activity {
 	
 	int curChemicalSubsetID;
+	
+	SubsetValuesAdapter adapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +40,7 @@ public class SubsetEditActivity extends Activity {
 
         final ListView listview = (ListView) findViewById(R.id.subsetEditChemicalList);
         
-        final SubsetValuesAdapter adapter = new SubsetValuesAdapter(this,
+        adapter = new SubsetValuesAdapter(this,
         	android.R.layout.simple_list_item_1, cur.chemicals);
         
         listview.setAdapter(adapter);
@@ -90,6 +93,14 @@ public class SubsetEditActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.subset_edit, menu);
         return true;
+    }
+    
+    @Override
+    public void onResume(){
+    	super.onResume();
+    	if(adapter != null){
+    		((BaseAdapter) adapter).notifyDataSetChanged();
+    	}
     }
     
     @Override

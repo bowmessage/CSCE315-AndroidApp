@@ -30,6 +30,7 @@ import android.widget.TextView;
 public class SubsetViewActivity extends Activity {
 	
 	public static ArrayList<ChemicalSubset> subsets;
+	SubsetArrayAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +41,7 @@ public class SubsetViewActivity extends Activity {
         
         final ListView listview = (ListView) findViewById(R.id.subsetViewsubsetList);
         
-        final SubsetArrayAdapter adapter = new SubsetArrayAdapter(this,
+        adapter = new SubsetArrayAdapter(this,
         	android.R.layout.simple_list_item_1, subsets);
             //R.layout.subset_list_item, list);
         listview.setAdapter(adapter);
@@ -103,6 +104,14 @@ public class SubsetViewActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.subset_view, menu);
         return true;
+    }
+    
+    @Override
+    public void onResume(){
+    	super.onResume();
+    	if(adapter != null){
+    		((BaseAdapter) adapter).notifyDataSetChanged();
+    	}
     }
     
     @Override
