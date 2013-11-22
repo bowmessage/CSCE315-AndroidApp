@@ -1,7 +1,12 @@
 package com.example.chemiquiz;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.xmlpull.v1.XmlSerializer;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,6 +15,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Xml;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -115,6 +121,49 @@ public class SubsetViewActivity extends Activity {
     }
     
     @Override
+    public void onDestroy(){
+    	super.onDestroy();
+    	//Save static arraylist subsets into xml storage
+    	String filename = "subsets.xml";
+        try {
+	        FileOutputStream fos = openFileOutput(filename,Context.MODE_APPEND);
+	        XmlSerializer serializer = Xml.newSerializer();
+	        serializer.setOutput(fos, "UTF-8");
+	        serializer.startDocument(null, Boolean.valueOf(true));
+	        serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
+	        serializer.startTag(null, "root");
+	        for(int i = 0; i < subsets.size(); i++){
+	        	serializer.startTag(null, "ChemicalSubset");
+	        	for(int j = 0; j < subsets.get(i).size(); j++){
+	        		serializer.startTag(null, "Chemical");
+	        		serializer.startTag(null, "Name");
+	        		serializer.text(subsets.get(i).get(j).name);
+	        		serializer.endTag(null, "Name");
+	        		serializer.startTag(null, "Id");
+	        		serializer.text(subsets.get(i).get(j).id + "");
+	        		serializer.endTag(null, "Id");
+	        		serializer.endTag(null, "Chemical");
+	        	}
+	        	serializer.endTag(null, "ChemicalSubset");
+	        }
+	        serializer.endDocument();
+	        serializer.flush();
+	        fos.close();
+        } catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add:
@@ -186,7 +235,7 @@ class SubsetArrayAdapter extends ArrayAdapter<ChemicalSubset> {
       TextView nameTextView = (TextView) rowView.findViewById(R.id.name);
       TextView sizeTextView = (TextView) rowView.findViewById(R.id.size);
       nameTextView.setText(values.get(position).getName());
-      sizeTextView.setText(values.get(position).getSize() + " items"); 
+      sizeTextView.setText(values.get(position).size() + " items"); 
 
       return rowView;
     }

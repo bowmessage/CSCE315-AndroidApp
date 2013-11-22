@@ -1,5 +1,6 @@
 package com.example.chemiquiz;
 
+import java.io.Serializable;
 import java.util.List;
 
 import android.app.Activity;
@@ -50,9 +51,9 @@ public class SubsetEditActivity extends Activity {
           @Override
           public void onItemClick(AdapterView<?> parent, final View view,
               int position, long id) {
-            final int item = (Integer) parent.getItemAtPosition(position);
+            final Chemical item = (Chemical) parent.getItemAtPosition(position);
             Intent i = new Intent(SubsetEditActivity.this, DetailViewActivity.class);
-            i.putExtra("com.exmaple.chemiquiz.DetailChemSpiderID", item);
+            i.putExtra("com.exmaple.chemiquiz.DetailChemSpiderID", (Serializable)item);
             SubsetEditActivity.this.startActivity(i);
           }
 
@@ -135,9 +136,10 @@ class SubsetValuesAdapter extends ArrayAdapter<Chemical> {
       LayoutInflater inflater = (LayoutInflater) context
           .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
       View rowView = inflater.inflate(R.layout.list_item_chemical, parent, false);
-      TextView nameTextView = (TextView) rowView.findViewById(R.id.idNumber);
+      
+      TextView nameTextView = (TextView) rowView.findViewById(R.id.name);
       nameTextView.setText(values.get(position).getName() + "");
-
+      
       return rowView;
     }
 

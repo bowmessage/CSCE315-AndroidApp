@@ -37,6 +37,10 @@ public class ChemicalSubset {
 		//new CommonNameParser(i.id)
 		//.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{null});
 	}
+	
+	public Chemical get(int i){
+		return chemicals.get(i);
+	}
 
 	public void remove(int i) {
 		chemicals.remove(i);
@@ -50,7 +54,7 @@ public class ChemicalSubset {
 		this.name = name;
 	}
 
-	public int getSize() {
+	public int size() {
 		return chemicals.size();
 	}
 

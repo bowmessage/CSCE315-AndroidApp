@@ -9,12 +9,20 @@
     tools:context=".SubsetViewActivity" >
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/detailName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
         android:text="This is the detail view."
         android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <ImageView
+        android:id="@+id/detailImage"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+         />
 
 </RelativeLayout>

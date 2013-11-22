@@ -101,7 +101,7 @@ public class SearchViewActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				String query = searchVal.getEditableText().toString();
-				new XmlParsing("http://www.chemspider.com/search.asmx/SimpleSearch?query="+query+"&token=f52ab236-347f-41dd-973d-a0e6668b7e14").executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{null});
+				new IdNumberParser("http://www.chemspider.com/search.asmx/SimpleSearch?query="+query+"&token=f52ab236-347f-41dd-973d-a0e6668b7e14").executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{null});
 			}
         });
         
@@ -120,12 +120,12 @@ public class SearchViewActivity extends Activity {
         
     }
     
-    public class XmlParsing extends AsyncTask<String, Void, String> {
+    public class IdNumberParser extends AsyncTask<String, Void, String> {
 
         // variables passed in:
         String urls;
         //  constructor
-        public XmlParsing(String urls) {
+        public IdNumberParser(String urls) {
             this.urls = urls;
         }
 
@@ -182,7 +182,6 @@ public class SearchViewActivity extends Activity {
             // Now we have your JSONObject, play around with it.
             if (pDialog.isShowing())
                 pDialog.dismiss();
-            
         }
 
     }

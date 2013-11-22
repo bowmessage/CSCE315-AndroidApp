@@ -7,13 +7,22 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
 
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.Menu;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -66,15 +75,24 @@ public class GameViewActivity extends Activity {
 	   return ret;
    }
    
-   public static Drawable drawableFromUrl(String url) throws IOException {
-	    Bitmap x;
+   class DrawableFromChemical extends AsyncTask<Pair<Chemical, ImageView>, Void, Integer> {
 
-	    HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-	    connection.connect();
-	    InputStream input = connection.getInputStream();
-
-	    x = BitmapFactory.decodeStream(input);
-	    return new BitmapDrawable(x);
+	    private Exception exception;
+	    
+	    @Override
+	    protected Integer doInBackground(Pair<Chemical, ImageView>... params) {
+	        try {
+	        	Bitmap x;
+	    	    HttpURLConnection connection = (HttpURLConnection) new URL("http://www.chemspider.com/ImagesHandler.ashx?id="+((Chemical) params[0].first).getId()+"&w=200&h=200").openConnection();
+	    	    connection.connect();
+	    	    InputStream input = connection.getInputStream();
+	    	    x = BitmapFactory.decodeStream(input);
+	    	    ((ImageView) params[0].second).setImageDrawable(new BitmapDrawable(GameViewActivity.this.getResources(), x));
+	    	    return 1;
+	        } catch (Exception e) {
+	            this.exception = e;
+	            return -1;
+	        }
+	    }
 	}
-    
 }
