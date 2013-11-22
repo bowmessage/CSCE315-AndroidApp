@@ -34,10 +34,8 @@ public class ChemicalSubset {
 
 	public void add(Chemical i) {
 		chemicals.add(i);
-		new CommonNameParser(
-				"http://www.chemspider.com/MassSpecAPI.asmx/GetExtendedCompoundInfo?CSID="
-						+ i.id + "&token=f52ab236-347f-41dd-973d-a0e6668b7e14", chemicals.size()-1)
-		.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{null});
+		//new CommonNameParser(i.id)
+		//.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{null});
 	}
 
 	public void remove(int i) {
@@ -60,12 +58,13 @@ public class ChemicalSubset {
 
 		// variables passed in:
 		String urls;
-		int indexToMod;
+		int id;
 
 		// constructor
-		public CommonNameParser(String urls, int indexToModify) {
-			this.urls = urls;
-			indexToMod = indexToModify;
+		public CommonNameParser(int id) {
+			this.id = id;
+			urls = "http://www.chemspider.com/MassSpecAPI.asmx/GetExtendedCompoundInfo?CSID="
+					+ id + "&token=f52ab236-347f-41dd-973d-a0e6668b7e14";
 		}
 
 		@Override
@@ -90,7 +89,7 @@ public class ChemicalSubset {
 
 				NodeList nodeList = doc.getElementsByTagName("CommonName");
 				Log.d("cq", nodeList.item(0).getTextContent());
-				chemicals.get(indexToMod).setName(nodeList.item(0).getTextContent());
+				chemicals.add(new Chemical(id, nodeList.item(0).getTextContent()));
 
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block

@@ -20,6 +20,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -44,7 +45,7 @@ public class SearchViewActivity extends Activity {
 	
 	ProgressDialog pDialog;
 	
-	ChemicalSubset resultantChemSpiderIDs;
+	ChemicalSubset resultantChemicals;
 	ListView searchResults;
 
     @Override
@@ -52,7 +53,7 @@ public class SearchViewActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_view);
         
-        resultantChemSpiderIDs = new ChemicalSubset();
+        resultantChemicals = new ChemicalSubset();
         
         
         Bundle extras = getIntent().getExtras();
@@ -67,7 +68,7 @@ public class SearchViewActivity extends Activity {
         addButton.setEnabled(false);
         
         final ResultsArrayAdapter adapter = new ResultsArrayAdapter(this,
-            	android.R.layout.simple_list_item_1, resultantChemSpiderIDs.chemicals);
+            	android.R.layout.simple_list_item_1, resultantChemicals.chemicals);
         
         searchVal.setOnEditorActionListener(new OnEditorActionListener(){
 			@Override
@@ -150,10 +151,12 @@ public class SearchViewActivity extends Activity {
 
                 NodeList nodeList = doc.getElementsByTagName("int");
                 
-                resultantChemSpiderIDs.clear();
+                resultantChemicals.clear();
 
                 for (int i = 0; i < nodeList.getLength(); i++) {
-                	resultantChemSpiderIDs.add(new Chemical(Integer.parseInt(nodeList.item(i).getTextContent())));
+                	new CommonNameParser(Integer.parseInt(nodeList.item(i).getTextContent()))
+                	.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new String[]{null});
+                	//resultantChemSpiderIDs.add(new Chemical(Integer.parseInt(nodeList.item(i).getTextContent())));
                 }
 
             } catch (MalformedURLException e) {
@@ -180,12 +183,70 @@ public class SearchViewActivity extends Activity {
             if (pDialog.isShowing())
                 pDialog.dismiss();
             
-            ((BaseAdapter) searchResults.getAdapter()).notifyDataSetChanged();
-            
         }
 
     }
     
+    public class CommonNameParser extends AsyncTask<String, Void, String> {
+
+		// variables passed in:
+		String urls;
+		int id;
+
+		// constructor
+		public CommonNameParser(int id) {
+			this.id = id;
+			urls = "http://www.chemspider.com/MassSpecAPI.asmx/GetExtendedCompoundInfo?CSID="
+					+ id + "&token=f52ab236-347f-41dd-973d-a0e6668b7e14";
+		}
+
+		@Override
+		protected void onPreExecute() {
+
+		}
+
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+
+			URL url;
+			try {
+
+				url = new URL(urls);
+				DocumentBuilderFactory dbf = DocumentBuilderFactory
+						.newInstance();
+				DocumentBuilder db = dbf.newDocumentBuilder();
+				Document doc = db.parse(new InputSource(url.openStream()));
+
+				doc.getDocumentElement().normalize();
+
+				NodeList nodeList = doc.getElementsByTagName("CommonName");
+				Log.d("cq", nodeList.item(0).getTextContent());
+				resultantChemicals.add(new Chemical(id, nodeList.item(0).getTextContent()));
+
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SAXException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+            ((BaseAdapter) searchResults.getAdapter()).notifyDataSetChanged();
+		}
+
+	}
     
 
 
@@ -214,6 +275,9 @@ class ResultsArrayAdapter extends ArrayAdapter<Chemical> {
     
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+    	if(chemicals.get(position).name == null){
+    		//return null;
+    	}
       LayoutInflater inflater = (LayoutInflater) context
           .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
       View rowView = inflater.inflate(R.layout.list_item_search_result, parent, false);
