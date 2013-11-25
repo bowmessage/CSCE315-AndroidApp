@@ -14,13 +14,14 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xmlpull.v1.XmlSerializer;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -70,8 +71,33 @@ public class SubsetViewActivity extends Activity {
           @Override
           public void onItemClick(AdapterView<?> parent, final View view,
               int position, long id) {
-            final ChemicalSubset item = (ChemicalSubset) parent.getItemAtPosition(position);
-            SubsetViewActivity.this.startActivity(new Intent(SubsetViewActivity.this, GameViewActivity.class));
+            //final ChemicalSubset item = (ChemicalSubset) parent.getItemAtPosition(position);
+        	  
+        	if(subsets.get(position).size() >= 4){
+        		Intent gameIntent = new Intent(SubsetViewActivity.this, GameViewActivity.class);
+            	gameIntent.putExtra("com.exmaple.chemiquiz.PlayingSubsetID", position);
+                SubsetViewActivity.this.startActivity(gameIntent);
+        	}
+        	else{
+        		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(SubsetViewActivity.this);
+         
+        			alertDialogBuilder.setTitle("Subset Too Small");
+         
+        			alertDialogBuilder
+        				.setMessage("You cannot play with a subset with less than 4 items.")
+        				.setCancelable(true)
+        				.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+        					public void onClick(DialogInterface dialog,int id) {
+        						
+        					}
+        				  });
+         
+        				// create alert dialog
+        				AlertDialog alertDialog = alertDialogBuilder.create();
+         
+        				// show it
+        				alertDialog.show();
+        	}
           }
 
         });
@@ -227,7 +253,7 @@ public class SubsetViewActivity extends Activity {
 	        serializer.flush();
 	        fos.close();
         } catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			// TODO Auto-generated catch block change
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
