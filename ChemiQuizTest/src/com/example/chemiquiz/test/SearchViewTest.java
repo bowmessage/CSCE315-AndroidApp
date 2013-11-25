@@ -35,7 +35,7 @@ public class SearchViewTest extends ActivityUnitTestCase<SearchViewActivity> {
     	Assert.assertNotNull(this.getActivity().findViewById(R.id.searchResults));
     }
     
-    public void testOneResultFromAspirinSearch(){
+    /*public void testOneResultFromAspirinSearch(){
     	Intent searchIntent = new Intent(mContext, SearchViewActivity.class);
     	searchIntent.putExtra("com.exmaple.chemiquiz.AddingToSubsetID", 0);
     	SearchViewActivity a = startActivity(searchIntent, null, null);
@@ -48,7 +48,7 @@ public class SearchViewTest extends ActivityUnitTestCase<SearchViewActivity> {
     	
     	ListView l = (ListView) a.findViewById(R.id.searchResults);
     	Assert.assertEquals(l.getCount(), 1);
-    }
+    }*/
 	
 	public SearchViewTest(Class<SearchViewActivity> activityClass) {
 		super(activityClass);
