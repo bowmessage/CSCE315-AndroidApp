@@ -47,14 +47,13 @@ import android.widget.TextView;
 
 public class SubsetViewActivity extends Activity {
 	
-	public static ArrayList<ChemicalSubset> subsets;
+	public static ArrayList<ChemicalSubset> subsets = new ArrayList<ChemicalSubset>();
 	SubsetArrayAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        subsets = new ArrayList<ChemicalSubset>();
         importSubsetsXMLData();
 
         setContentView(R.layout.activity_subset_view);

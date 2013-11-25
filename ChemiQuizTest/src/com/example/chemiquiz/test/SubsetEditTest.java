@@ -3,18 +3,19 @@ package com.example.chemiquiz.test;
 import junit.framework.Assert;
 import android.content.Context;
 import android.content.Intent;
-import android.test.ActivityUnitTestCase;
-import android.widget.BaseAdapter;
+import android.test.ActivityInstrumentationTestCase2;
 import android.widget.ListView;
 
+import com.example.chemiquiz.Chemical;
 import com.example.chemiquiz.ChemicalSubset;
 import com.example.chemiquiz.R;
+import com.example.chemiquiz.SubsetEditActivity;
 import com.example.chemiquiz.SubsetViewActivity;
 
-public class SubsetEditTest extends ActivityUnitTestCase<SubsetViewActivity> {
+public class SubsetEditTest extends ActivityInstrumentationTestCase2<SubsetEditActivity> {
 		
 	public SubsetEditTest(){
-		super(SubsetViewActivity.class);
+		super(SubsetEditActivity.class);
 	}
 	
 	Context mContext;
@@ -25,27 +26,22 @@ public class SubsetEditTest extends ActivityUnitTestCase<SubsetViewActivity> {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        ChemicalSubset CS1 = new ChemicalSubset("test1");
+        CS1.add(new Chemical(0,"test_chem"));
+        SubsetViewActivity.subsets.add(CS1);
+        
         mContext = this.getInstrumentation().getContext();
+        Intent i = new Intent(mContext, SubsetEditActivity.class);
+    	i.putExtra("com.exmaple.chemiquiz.EditingSubsetID", 0);
+        setActivityIntent(i);
     }   
 
     public void testListViewExists(){
-    	Intent i = new Intent(mContext, SubsetViewActivity.class);
-    	i.putExtra("com.exmaple.chemiquiz.EditingSubsetID", 0);
-    	startActivity(i, null, null);
-    	Assert.assertNotNull(this.getActivity().findViewById(R.id.subsetEditChemicalList));
+    	Assert.assertNotNull(getActivity().findViewById(R.id.subsetEditChemicalList));
     }
     
     public void testListViewTiedToChemicalArrayList(){
-    	SubsetViewActivity a = startActivity(new Intent(mContext, SubsetViewActivity.class), null, null);
-    	SubsetViewActivity.subsets.add(new ChemicalSubset("test1"));
-    	ListView l = (ListView) a.findViewById(R.id.subsetViewsubsetList);
-    	((BaseAdapter) l.getAdapter()).notifyDataSetChanged();
+    	ListView l = (ListView) getActivity().findViewById(R.id.subsetEditChemicalList);
     	Assert.assertEquals(l.getCount(), 1);
     }
-	
-	public SubsetEditTest(Class<SubsetViewActivity> activityClass) {
-		super(activityClass);
-	}
-	
-	
 }
