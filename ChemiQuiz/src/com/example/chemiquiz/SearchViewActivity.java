@@ -182,8 +182,10 @@ public class SearchViewActivity extends Activity {
         @Override
         protected void onPostExecute(String result) {
             // Now we have your JSONObject, play around with it.
-            if (pDialog.isShowing())
-                pDialog.dismiss();
+        	if(SearchViewActivity.this != null){
+	            if (pDialog.isShowing())
+	                pDialog.dismiss();
+        	}
         }
 
     }

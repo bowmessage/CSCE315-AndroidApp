@@ -13,7 +13,6 @@ public class Chemical implements Serializable, Cloneable {
 	public Chemical(int i, String s){
 		id = i;
 		name = s;
-		//test
 	}
 	
 	public Chemical() {
