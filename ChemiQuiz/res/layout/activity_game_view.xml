@@ -62,7 +62,7 @@
 		        android:layout_weight="1"
 		        android:scrollHorizontally="true" 
 			    android:lines="1"
-			    android:ellipsize="end"/>/>
+			    android:ellipsize="end"/>
 		
 		    
 		
@@ -77,7 +77,7 @@
 		        android:layout_weight="1"
 		        android:scrollHorizontally="true" 
 			    android:lines="1"
-			    android:ellipsize="end"/>/>
+			    android:ellipsize="end"/>
         </LinearLayout>
 
     </LinearLayout>

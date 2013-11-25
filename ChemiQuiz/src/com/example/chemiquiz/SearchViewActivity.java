@@ -131,7 +131,9 @@ public class SearchViewActivity extends Activity {
 
         @Override
         protected void onPreExecute() {
-            pDialog = ProgressDialog.show(SearchViewActivity.this, "Fetching Details..", "Please wait...", true);
+        	if(SearchViewActivity.this != null){
+        		pDialog = ProgressDialog.show(SearchViewActivity.this, "Fetching Details..", "Please wait...", true);
+        	}
         }
 
 
