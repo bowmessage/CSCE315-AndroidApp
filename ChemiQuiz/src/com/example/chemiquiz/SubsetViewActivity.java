@@ -57,8 +57,6 @@ public class SubsetViewActivity extends Activity {
         importSubsetsXMLData();
 
         setContentView(R.layout.activity_subset_view);
-
-        
         
         final ListView listview = (ListView) findViewById(R.id.subsetViewsubsetList);
         
@@ -167,49 +165,13 @@ public class SubsetViewActivity extends Activity {
             	for(int j = 0; j < subsetChemicals.size(); j++){
             		ArrayList<Node> chemicalChildren = getElementNodes(subsetChemicals.get(j).getChildNodes());
             		cur.add(new Chemical(Integer.parseInt(chemicalChildren.get(1).getTextContent()), chemicalChildren.get(0).getTextContent()));
-            	}
-            	
-            	
-                
-                
-                
-                /*
-                for(int c = 0; c < children.getLength(); c++){
-                	if (children.item(c).getNodeType() != Node.ELEMENT_NODE) continue;
-                	
-                	if(!hasSetName){
-                		cur.setName(children.item(c).getTextContent());
-                		hasSetName = true;
-                	}
-                	else{
-                		NodeList subsetChemicals = children.item(c).getChildNodes();
-                		Chemical curChem = new Chemical();
-                		for(int j = 0; j < subsetChemicals.getLength(); j++){
-                			if(subsetChemicals.item(j).getNodeType() != Node.ELEMENT_NODE) continue;
-                			
-                			NodeList chemChildren = subsetChemicals.item(j).getChildNodes();
-                			if(curChem.getName() == ""){
-                				chemChildren.item(0).getTextContent();
-                				hasSetChemName = true;
-                			}
-                			else{
-                				
-                			}
-                        	Integer a = Integer.parseInt(chemChildren.item(1).getTextContent());
-                        	String b = ""
-                        }
-                		cur.add(curChem);
-                	}
-                }    */            
+            	}           
                 subsets.add(cur);
             }
     	} catch(Exception e){
     		e.printStackTrace();
     	}
-    	
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
