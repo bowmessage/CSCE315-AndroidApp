@@ -3,7 +3,7 @@ package com.example.chemiquiz.test;
 import junit.framework.Assert;
 import android.content.Context;
 import android.content.Intent;
-import android.test.ActivityUnitTestCase;
+import android.test.ActivityInstrumentationTestCase2;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -11,7 +11,7 @@ import android.widget.ListView;
 import com.example.chemiquiz.R;
 import com.example.chemiquiz.SearchViewActivity;
 
-public class SearchViewTest extends ActivityUnitTestCase<SearchViewActivity> {
+public class SearchViewTest extends ActivityInstrumentationTestCase2<SearchViewActivity> {
 		
 	public SearchViewTest(){
 		super(SearchViewActivity.class);
@@ -26,33 +26,48 @@ public class SearchViewTest extends ActivityUnitTestCase<SearchViewActivity> {
             e.printStackTrace();
         }
         mContext = this.getInstrumentation().getContext();
+    	Intent searchIntent = new Intent(mContext, SearchViewActivity.class);
+    	searchIntent.putExtra("com.exmaple.chemiquiz.AddingToSubsetID", 0);
+    	setActivityIntent(searchIntent);
     }   
 
     public void testListViewExists(){
-    	Intent searchIntent = new Intent(mContext, SearchViewActivity.class);
-    	searchIntent.putExtra("com.exmaple.chemiquiz.AddingToSubsetID", 0);
-    	startActivity(searchIntent, null, null);
-    	Assert.assertNotNull(this.getActivity().findViewById(R.id.searchResults));
+    	Assert.assertNotNull(getActivity().findViewById(R.id.searchResults));
     }
     
-    /*public void testOneResultFromAspirinSearch(){
-    	Intent searchIntent = new Intent(mContext, SearchViewActivity.class);
-    	searchIntent.putExtra("com.exmaple.chemiquiz.AddingToSubsetID", 0);
-    	SearchViewActivity a = startActivity(searchIntent, null, null);
+    public void testOneResultFromAspirinSearchAfterFiveSeconds(){
+    	final EditText query = (EditText) getActivity().findViewById(R.id.searchText);
+		getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				query.setText("aspirin");
+			} 
+			
+		});
+    	getInstrumentation().waitForIdleSync();
     	
-    	EditText query = (EditText) a.findViewById(R.id.searchText);
-    	query.setText("aspirin");
+    	final ImageButton searchButton = (ImageButton) getActivity().findViewById(R.id.searchButton);
+		getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				searchButton.performClick();
+			} 
+			
+		});
+    	getInstrumentation().waitForIdleSync();
     	
-    	ImageButton searchButton = (ImageButton) a.findViewById(R.id.searchButton);
-    	searchButton.performClick();
+    	try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     	
-    	ListView l = (ListView) a.findViewById(R.id.searchResults);
+    	ListView l = (ListView) getActivity().findViewById(R.id.searchResults);
     	Assert.assertEquals(l.getCount(), 1);
-    }*/
+    }
 	
 	public SearchViewTest(Class<SearchViewActivity> activityClass) {
 		super(activityClass);
 	}
-	
-	
 }

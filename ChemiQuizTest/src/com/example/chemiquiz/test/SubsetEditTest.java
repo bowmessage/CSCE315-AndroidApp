@@ -42,6 +42,6 @@ public class SubsetEditTest extends ActivityInstrumentationTestCase2<SubsetEditA
     
     public void testListViewTiedToChemicalArrayList(){
     	ListView l = (ListView) getActivity().findViewById(R.id.subsetEditChemicalList);
-    	Assert.assertEquals(l.getCount(), 1);
+    	Assert.assertEquals(l.getCount(), SubsetViewActivity.subsets.get(0).size());
     }
 }
