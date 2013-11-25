@@ -57,6 +57,17 @@ public class ChemicalSubset {
 	public int size() {
 		return chemicals.size();
 	}
+	
+	public ArrayList<Chemical> toArrayList(){
+		ArrayList<Chemical> ret = new ArrayList<Chemical>();
+		for(int i = 0; i < chemicals.size(); i++){
+			ret.add(chemicals.get(i).clone());
+		}
+		int tmp = 0;
+		return ret;
+		//test
+		
+	}
 
 	public class CommonNameParser extends AsyncTask<String, Void, String> {
 
