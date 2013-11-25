@@ -2,7 +2,7 @@ package com.example.chemiquiz;
 
 import java.io.Serializable;
 
-public class Chemical implements Serializable {
+public class Chemical implements Serializable, Cloneable {
 	public String name;
 	public int id;
 	
@@ -13,6 +13,7 @@ public class Chemical implements Serializable {
 	public Chemical(int i, String s){
 		id = i;
 		name = s;
+		//test
 	}
 	
 	public Chemical() {
@@ -29,5 +30,10 @@ public class Chemical implements Serializable {
 	}
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	@Override
+	public Chemical clone(){
+		return new Chemical(id, name);
 	}
 }
