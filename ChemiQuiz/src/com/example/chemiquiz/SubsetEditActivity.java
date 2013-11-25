@@ -53,7 +53,7 @@ public class SubsetEditActivity extends Activity {
               int position, long id) {
             final Chemical item = (Chemical) parent.getItemAtPosition(position);
             Intent i = new Intent(SubsetEditActivity.this, DetailViewActivity.class);
-            i.putExtra("com.exmaple.chemiquiz.DetailChemSpiderID", (Serializable)item);
+            i.putExtra("com.exmaple.chemiquiz.DetailChemical", (Serializable)item);
             SubsetEditActivity.this.startActivity(i);
           }
 

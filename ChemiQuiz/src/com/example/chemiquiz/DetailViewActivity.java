@@ -28,7 +28,7 @@ public class DetailViewActivity extends Activity {
         setContentView(R.layout.activity_detail_view);
         
         Bundle extras = getIntent().getExtras();
-        Chemical chem = (Chemical) extras.getSerializable("com.exmaple.chemiquiz.DetailChemSpiderID");
+        Chemical chem = (Chemical) extras.getSerializable("com.exmaple.chemiquiz.DetailChemical");
         
         image = (ImageView) findViewById(R.id.detailImage);
         
