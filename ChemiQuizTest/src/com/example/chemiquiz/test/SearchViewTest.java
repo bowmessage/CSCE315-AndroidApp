@@ -31,8 +31,15 @@ public class SearchViewTest extends ActivityInstrumentationTestCase2<SearchViewA
     	setActivityIntent(searchIntent);
     }   
 
-    public void testListViewExists(){
+    /*public void testListViewExists(){
+    	
+    }*/
+    
+    public void testUIExists(){
     	Assert.assertNotNull(getActivity().findViewById(R.id.searchResults));
+    	Assert.assertNotNull(getActivity().findViewById(R.id.searchText));
+    	Assert.assertNotNull(getActivity().findViewById(R.id.searchButton));
+    	Assert.assertNotNull(getActivity().findViewById(R.id.addButton));
     }
     
     public void testOneResultFromAspirinSearchAfterFiveSeconds(){
