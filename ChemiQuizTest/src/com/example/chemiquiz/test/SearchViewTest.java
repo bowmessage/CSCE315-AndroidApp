@@ -4,12 +4,10 @@ import junit.framework.Assert;
 import android.content.Context;
 import android.content.Intent;
 import android.test.ActivityUnitTestCase;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
-import com.example.chemiquiz.ChemicalSubset;
 import com.example.chemiquiz.R;
 import com.example.chemiquiz.SearchViewActivity;
 
