@@ -54,12 +54,10 @@ public class DetailViewActivity extends Activity {
 	    protected Drawable doInBackground(Chemical... params) {
 	        try {
 	        	Bitmap x;
-	    	    HttpURLConnection connection = (HttpURLConnection) new URL("http://www.chemspider.com/ImagesHandler.ashx?id="+params[0].getId()+"&w=200&h=200").openConnection();
-	    	    Log.d("cq", "http://www.chemspider.com/ImagesHandler.ashx?id="+params[0].getId()+"&w=500&h=500");
+	    	    HttpURLConnection connection = (HttpURLConnection) new URL("http://www.chemspider.com/ImagesHandler.ashx?id="+params[0].getId()+"&w=300&h=300").openConnection();
 	    	    connection.connect();
 	    	    InputStream input = connection.getInputStream();
 	    	    x = BitmapFactory.decodeStream(input);
-	    	    Log.d("cq", connection.getURL().toString());
 	    	    return new BitmapDrawable(DetailViewActivity.this.getResources(), x);
 	        } catch (Exception e) {
 	            this.exception = e;

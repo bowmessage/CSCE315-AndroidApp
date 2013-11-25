@@ -191,6 +191,7 @@ public class SearchViewActivity extends Activity {
 		// variables passed in:
 		String urls;
 		int id;
+		NodeList nodeList;
 
 		// constructor
 		public CommonNameParser(int id) {
@@ -219,9 +220,8 @@ public class SearchViewActivity extends Activity {
 
 				doc.getDocumentElement().normalize();
 
-				NodeList nodeList = doc.getElementsByTagName("CommonName");
-				Log.d("cq", nodeList.item(0).getTextContent());
-				resultantChemicals.add(new Chemical(id, nodeList.item(0).getTextContent()));
+				nodeList = doc.getElementsByTagName("CommonName");
+				
 
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
@@ -242,7 +242,8 @@ public class SearchViewActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(String result) {
-            ((BaseAdapter) searchResults.getAdapter()).notifyDataSetChanged();
+			resultantChemicals.add(new Chemical(id, nodeList.item(0).getTextContent()));
+			((BaseAdapter) searchResults.getAdapter()).notifyDataSetChanged();
 		}
 
 	}

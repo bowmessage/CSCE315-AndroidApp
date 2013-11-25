@@ -8,12 +8,16 @@ public class Chemical implements Serializable {
 	
 	public Chemical(int i){
 		id = i;
+		name = "";
 	}
 	public Chemical(int i, String s){
 		id = i;
 		name = s;
 	}
 	
+	public Chemical() {
+		name = "";
+	}
 	public String getName() {
 		return name;
 	}

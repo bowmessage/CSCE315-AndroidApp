@@ -1,11 +1,22 @@
 package com.example.chemiquiz;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xmlpull.v1.XmlSerializer;
 
 import android.app.Activity;
@@ -41,9 +52,13 @@ public class SubsetViewActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        subsets = new ArrayList<ChemicalSubset>();
+        importSubsetsXMLData();
+
         setContentView(R.layout.activity_subset_view);
 
-        subsets = new ArrayList<ChemicalSubset>();
+        
         
         final ListView listview = (ListView) findViewById(R.id.subsetViewsubsetList);
         
@@ -102,6 +117,97 @@ public class SubsetViewActivity extends Activity {
         	}
 		});
       }
+    
+    public ArrayList<Node> getElementNodes(NodeList nl){
+    	ArrayList<Node> ret = new ArrayList<Node>();
+    	for(int i = 0; i < nl.getLength(); i++){
+    		if (nl.item(i).getNodeType() == Node.ELEMENT_NODE){
+    			ret.add(nl.item(i));
+    		}
+    	}
+    	return ret;
+    }
+    
+    public void importSubsetsXMLData(){
+    	try{
+    		FileInputStream fis = null;
+            InputStreamReader isr = null;
+
+            fis = openFileInput("subsets.xml");
+            isr = new InputStreamReader(fis);
+            char[] inputBuffer = new char[fis.available()];
+            isr.read(inputBuffer);
+            String data = new String(inputBuffer);
+            isr.close();
+            fis.close();
+            
+            InputStream is = new ByteArrayInputStream(data.getBytes("UTF-8"));
+
+            DocumentBuilderFactory dbf;
+            DocumentBuilder db;
+            NodeList items = null;
+            Document dom;
+
+            dbf = DocumentBuilderFactory.newInstance();
+            db = dbf.newDocumentBuilder();
+            dom = db.parse(is);
+            dom.getDocumentElement().normalize();
+
+            
+            items = dom.getElementsByTagName("ChemicalSubset");
+
+            for (int i = 0; i < items.getLength(); i++){
+            	ChemicalSubset cur = new ChemicalSubset();
+            	
+            	ArrayList<Node> children = getElementNodes(items.item(i).getChildNodes());
+            	cur.setName(children.get(0).getTextContent());
+            	
+            	ArrayList<Node> subsetChemicals = getElementNodes(children.get(1).getChildNodes());
+            	
+            	for(int j = 0; j < subsetChemicals.size(); j++){
+            		ArrayList<Node> chemicalChildren = getElementNodes(subsetChemicals.get(j).getChildNodes());
+            		cur.add(new Chemical(Integer.parseInt(chemicalChildren.get(1).getTextContent()), chemicalChildren.get(0).getTextContent()));
+            	}
+            	
+            	
+                
+                
+                
+                /*
+                for(int c = 0; c < children.getLength(); c++){
+                	if (children.item(c).getNodeType() != Node.ELEMENT_NODE) continue;
+                	
+                	if(!hasSetName){
+                		cur.setName(children.item(c).getTextContent());
+                		hasSetName = true;
+                	}
+                	else{
+                		NodeList subsetChemicals = children.item(c).getChildNodes();
+                		Chemical curChem = new Chemical();
+                		for(int j = 0; j < subsetChemicals.getLength(); j++){
+                			if(subsetChemicals.item(j).getNodeType() != Node.ELEMENT_NODE) continue;
+                			
+                			NodeList chemChildren = subsetChemicals.item(j).getChildNodes();
+                			if(curChem.getName() == ""){
+                				chemChildren.item(0).getTextContent();
+                				hasSetChemName = true;
+                			}
+                			else{
+                				
+                			}
+                        	Integer a = Integer.parseInt(chemChildren.item(1).getTextContent());
+                        	String b = ""
+                        }
+                		cur.add(curChem);
+                	}
+                }    */            
+                subsets.add(cur);
+            }
+    	} catch(Exception e){
+    		e.printStackTrace();
+    	}
+    	
+    }
 
 
 
@@ -121,12 +227,12 @@ public class SubsetViewActivity extends Activity {
     }
     
     @Override
-    public void onDestroy(){
-    	super.onDestroy();
+    public void onStop(){
+    	super.onStop();
     	//Save static arraylist subsets into xml storage
     	String filename = "subsets.xml";
         try {
-	        FileOutputStream fos = openFileOutput(filename,Context.MODE_APPEND);
+	        FileOutputStream fos = openFileOutput(filename, 0);
 	        XmlSerializer serializer = Xml.newSerializer();
 	        serializer.setOutput(fos, "UTF-8");
 	        serializer.startDocument(null, Boolean.valueOf(true));
@@ -134,18 +240,27 @@ public class SubsetViewActivity extends Activity {
 	        serializer.startTag(null, "root");
 	        for(int i = 0; i < subsets.size(); i++){
 	        	serializer.startTag(null, "ChemicalSubset");
-	        	for(int j = 0; j < subsets.get(i).size(); j++){
-	        		serializer.startTag(null, "Chemical");
-	        		serializer.startTag(null, "Name");
-	        		serializer.text(subsets.get(i).get(j).name);
-	        		serializer.endTag(null, "Name");
-	        		serializer.startTag(null, "Id");
-	        		serializer.text(subsets.get(i).get(j).id + "");
-	        		serializer.endTag(null, "Id");
-	        		serializer.endTag(null, "Chemical");
-	        	}
+	        	
+		        	serializer.startTag(null, "SubsetName");
+		        	serializer.text(subsets.get(i).getName());
+		        	serializer.endTag(null, "SubsetName");
+		        	
+		        	serializer.startTag(null, "ChemicalList");
+		        	for(int j = 0; j < subsets.get(i).size(); j++){
+		        		serializer.startTag(null, "Chemical");
+		        		serializer.startTag(null, "Name");
+		        		serializer.text(subsets.get(i).get(j).name);
+		        		serializer.endTag(null, "Name");
+		        		serializer.startTag(null, "Id");
+		        		serializer.text(subsets.get(i).get(j).id + "");
+		        		serializer.endTag(null, "Id");
+		        		serializer.endTag(null, "Chemical");
+		        	}
+		        	serializer.endTag(null, "ChemicalList");
+		        	
 	        	serializer.endTag(null, "ChemicalSubset");
 	        }
+	        serializer.endTag(null, "root");
 	        serializer.endDocument();
 	        serializer.flush();
 	        fos.close();
