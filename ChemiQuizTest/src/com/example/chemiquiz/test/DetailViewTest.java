@@ -30,10 +30,6 @@ public class DetailViewTest extends ActivityInstrumentationTestCase2<DetailViewA
         i.putExtra("com.exmaple.chemiquiz.DetailChemical", new Chemical(1, "asdf"));
         setActivityIntent(i);
         
-    }   
-
-    public void testTextViewExists(){
-    	Assert.assertNotNull(getActivity().findViewById(R.id.detailName));
     }
     
     public void testDetailImageExsists(){
@@ -41,8 +37,9 @@ public class DetailViewTest extends ActivityInstrumentationTestCase2<DetailViewA
     }
     
     public void testDetailNameIsCorrect(){
-    	Assert.assertEquals(((Chemical)getActivity().getIntent().getExtras().getSerializable("com.exmaple.chemiquiz.DetailChemical")).getName(),
-    			((TextView)getActivity().findViewById(R.id.detailName)).getText().toString());
+    	/*Assert.assertEquals(((Chemical)getActivity().getIntent().getExtras().getSerializable("com.exmaple.chemiquiz.DetailChemical")).getName(),
+    			((TextView)getActivity().findViewById(R.id.detailName)).getText().toString());*/
+    	//removed detail view...
     }
     	
 	public DetailViewTest(Class<DetailViewActivity> activityClass) {

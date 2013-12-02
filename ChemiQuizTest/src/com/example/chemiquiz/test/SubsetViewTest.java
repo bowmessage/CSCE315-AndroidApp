@@ -1,7 +1,5 @@
 package com.example.chemiquiz.test;
 
-import java.util.ArrayList;
-
 import junit.framework.Assert;
 import android.content.Context;
 import android.content.Intent;

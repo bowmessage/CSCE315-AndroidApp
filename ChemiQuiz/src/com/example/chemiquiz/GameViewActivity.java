@@ -39,6 +39,8 @@ public class GameViewActivity extends Activity {
 	
 	Drawable imageBuffer;
 	
+	boolean firstQuestion = true;
+	
 	
 	int curQuestion = 0;
 	int curCorrectButton = -1;
@@ -57,8 +59,10 @@ public class GameViewActivity extends Activity {
 		curChemicalSubset.shuffle();
 
 		setContentView(R.layout.activity_game_view);
-
+		
 		setupGlobals();
+		
+		hideUI();
 		
 		setTitle("Playing: " + curChemicalSubset.getName());
 		
@@ -104,7 +108,6 @@ public class GameViewActivity extends Activity {
 		for(int i = 0; i < buttons.size(); i++){
 			final int finalI = i;
 			Button button = buttons.get(i);
-			final CharSequence text = button.getText();
 			
 			button.setOnClickListener(new OnClickListener(){
 				@Override
@@ -117,7 +120,7 @@ public class GameViewActivity extends Activity {
 			button.setOnLongClickListener(new OnLongClickListener() {
 				@Override
 				public boolean onLongClick(View v) {
-					Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
+					Toast.makeText(getApplicationContext(), ((Button) v).getText(), Toast.LENGTH_LONG).show();
 					return true;
 				}
 			});
@@ -136,7 +139,9 @@ public class GameViewActivity extends Activity {
 		}
 		curQuestion++;
 		if(curQuestion == curChemicalSubset.size()){
-			clearUI();
+			/*try {Thread.sleep(500);
+            } catch (InterruptedException e) { }*/
+			hideUI();
 			showScorePopup();
 		}
 		else{
@@ -145,11 +150,15 @@ public class GameViewActivity extends Activity {
 		}
 	}
 	
-	void clearUI(){
+	void hideUI(){
 		View sv = findViewById(R.id.scrollView1);
-		((RelativeLayout) sv.getParent()).removeView(sv);
-		
-		scoreView.setText("");
+		((RelativeLayout) sv.getParent()).setVisibility(View.INVISIBLE);
+		scoreView.setVisibility(View.INVISIBLE);
+	}
+	void showUI(){
+		View sv = findViewById(R.id.scrollView1);
+		((RelativeLayout) sv.getParent()).setVisibility(View.VISIBLE);
+		scoreView.setVisibility(View.VISIBLE);
 	}
 	
 	void updateScoreCount(){
@@ -230,7 +239,6 @@ public class GameViewActivity extends Activity {
 	}
 	
 	class nextQuestion extends AsyncTask<Integer, Void, Question>{
-
 		@Override
 		protected Question doInBackground(Integer... i) {
 			try {
@@ -254,7 +262,11 @@ public class GameViewActivity extends Activity {
 		@Override
 		protected void onPostExecute(Question q) {
 			setUiToQuestion(q);
+			if(firstQuestion){
+				showUI();
+				setUpListeners();
+				firstQuestion = false;
+			}
 		}
-		
 	}
 }
