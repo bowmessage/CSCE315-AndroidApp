@@ -64,69 +64,18 @@ public class GameViewActivity extends Activity {
 	}
 
 	void setUpListeners() {
-
-		Button button1 = buttons.get(0);
-		Button button2 = buttons.get(1);
-		Button button3 = buttons.get(2);
-		Button button4 = buttons.get(3);
-
-		final CharSequence text1 = button1.getText();
-		final CharSequence text2 = button2.getText();
-		final CharSequence text3 = button3.getText();
-		final CharSequence text4 = button4.getText();
-
-		button1.setOnLongClickListener(new OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				Context context = getApplicationContext();
-				CharSequence text = text1;
-				int duration = Toast.LENGTH_LONG;
-
-				Toast toast = Toast.makeText(context, text, duration);
-				toast.show();
-				return true;
-			}
-		});
-
-		button2.setOnLongClickListener(new OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				Context context = getApplicationContext();
-				CharSequence text = text2;
-				int duration = Toast.LENGTH_LONG;
-
-				Toast toast = Toast.makeText(context, text, duration);
-				toast.show();
-				return true;
-			}
-		});
-
-		button3.setOnLongClickListener(new OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				Context context = getApplicationContext();
-				CharSequence text = text3;
-				int duration = Toast.LENGTH_LONG;
-
-				Toast toast = Toast.makeText(context, text, duration);
-				toast.show();
-				return true;
-			}
-		});
-
-		button4.setOnLongClickListener(new OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View v) {
-				Context context = getApplicationContext();
-				CharSequence text = text4;
-				int duration = Toast.LENGTH_LONG;
-
-				Toast toast = Toast.makeText(context, text, duration);
-				toast.show();
-				return true;
-			}
-		});
-
+		
+		for(int i = 0; i < 4; i++){
+			Button button = buttons.get(i);
+			final CharSequence text = button.getText();
+			button.setOnLongClickListener(new OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View v) {
+					Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
+					return true;
+				}
+			});
+		}
 	}
 
 	void setUIToQuestion(int i) {
