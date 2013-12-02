@@ -11,17 +11,13 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.Pair;
 import android.view.Menu;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 public class DetailViewActivity extends Activity {
 	
 	ImageView image;
 	
-    @SuppressWarnings("unchecked")
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,12 +26,11 @@ public class DetailViewActivity extends Activity {
         Bundle extras = getIntent().getExtras();
         Chemical chem = (Chemical) extras.getSerializable("com.exmaple.chemiquiz.DetailChemical");
         
+        setTitle(chem.getName());
+        
         image = (ImageView) findViewById(R.id.detailImage);
         
         new DrawableFromChemical().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, chem);
-        
-        TextView t = (TextView) findViewById(R.id.detailName);
-        t.setText(chem.getName());
     }
 
 
@@ -47,8 +42,6 @@ public class DetailViewActivity extends Activity {
     }
     
     class DrawableFromChemical extends AsyncTask<Chemical, Void, Drawable> {
-
-	    private Exception exception;
 	    
 	    @Override
 	    protected Drawable doInBackground(Chemical... params) {
@@ -60,7 +53,6 @@ public class DetailViewActivity extends Activity {
 	    	    x = BitmapFactory.decodeStream(input);
 	    	    return new BitmapDrawable(DetailViewActivity.this.getResources(), x);
 	        } catch (Exception e) {
-	            this.exception = e;
 	            e.printStackTrace();
 	            return null;
 	        }

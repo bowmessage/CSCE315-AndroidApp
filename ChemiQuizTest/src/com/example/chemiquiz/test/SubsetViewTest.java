@@ -1,5 +1,7 @@
 package com.example.chemiquiz.test;
 
+import java.util.ArrayList;
+
 import junit.framework.Assert;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +28,7 @@ public class SubsetViewTest extends ActivityInstrumentationTestCase2<SubsetViewA
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         ChemicalSubset CS1 = new ChemicalSubset("test1");
         CS1.add(new Chemical(0,"test_chem"));
         SubsetViewActivity.subsets.add(CS1);
@@ -43,5 +46,9 @@ public class SubsetViewTest extends ActivityInstrumentationTestCase2<SubsetViewA
     public void testListViewTiedToChemicalArrayList(){
     	ListView l = (ListView) getActivity().findViewById(R.id.subsetViewsubsetList);
     	Assert.assertEquals(l.getCount(), SubsetViewActivity.subsets.size());
+    }
+    
+    public void testDialogBroughtUpWhenClickOnSmallSubset(){
+    	
     }
 }

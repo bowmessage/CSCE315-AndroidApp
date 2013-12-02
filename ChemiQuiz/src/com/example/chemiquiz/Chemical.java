@@ -3,6 +3,7 @@ package com.example.chemiquiz;
 import java.io.Serializable;
 
 public class Chemical implements Serializable, Cloneable {
+	private static final long serialVersionUID = -7989111605836217510L;
 	public String name;
 	public int id;
 	

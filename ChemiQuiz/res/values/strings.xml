@@ -10,5 +10,8 @@
     
     <color name="lightGray">#ddd</color>
     <color name="white">#fff</color>
+    
+    <color name="wrongAnswer"> #ebb </color>
+    <color name="correctAnswer"> #beb </color>
 
 </resources>

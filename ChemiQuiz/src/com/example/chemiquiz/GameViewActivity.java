@@ -12,11 +12,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
@@ -32,7 +35,10 @@ public class GameViewActivity extends Activity {
 
 	ImageView imageView;
 	ArrayList<Button> buttons;
+	TextView scoreView;
+	
 	Drawable imageBuffer;
+	
 	
 	int curQuestion = 0;
 	int curCorrectButton = -1;
@@ -48,16 +54,38 @@ public class GameViewActivity extends Activity {
 		int curSubsetIndex = extras
 				.getInt("com.exmaple.chemiquiz.PlayingSubsetID");
 		curChemicalSubset = SubsetViewActivity.subsets.get(curSubsetIndex);
+		curChemicalSubset.shuffle();
 
 		setContentView(R.layout.activity_game_view);
 
 		setupGlobals();
+		
+		setTitle("Playing: " + curChemicalSubset.getName());
+		
+		updateScoreCount();
 		
 		new nextQuestion().executeOnExecutor(
 				AsyncTask.THREAD_POOL_EXECUTOR, 0);
 
 		setUpListeners();
 	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.game_view, menu);
+		return true;
+	}
+	
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_exit_game:
+            	finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 	void setupGlobals() {
 		imageView = (ImageView) findViewById(R.id.imageView1);
@@ -67,6 +95,8 @@ public class GameViewActivity extends Activity {
 		buttons.add((Button) findViewById(R.id.Button02));
 		buttons.add((Button) findViewById(R.id.Button03));
 		buttons.add((Button) findViewById(R.id.Button04));
+		
+		scoreView = (TextView) findViewById(R.id.gameScore);
 	}
 
 	void setUpListeners() {
@@ -96,7 +126,13 @@ public class GameViewActivity extends Activity {
 
 	protected void submitAnswer(int i) {
 		if(i == curCorrectButton){
+			buttons.get(curCorrectButton).getBackground().setColorFilter(Color.GREEN,PorterDuff.Mode.MULTIPLY);
 			score++;
+			updateScoreCount();
+		}
+		else{
+			buttons.get(i).getBackground().setColorFilter(Color.RED,PorterDuff.Mode.MULTIPLY);
+			buttons.get(curCorrectButton).getBackground().setColorFilter(Color.GREEN,PorterDuff.Mode.MULTIPLY);
 		}
 		curQuestion++;
 		if(curQuestion == curChemicalSubset.size()){
@@ -112,25 +148,31 @@ public class GameViewActivity extends Activity {
 	void clearUI(){
 		View sv = findViewById(R.id.scrollView1);
 		((RelativeLayout) sv.getParent()).removeView(sv);
+		
+		scoreView.setText("");
+	}
+	
+	void updateScoreCount(){
+		TextView scoreView = (TextView) findViewById(R.id.gameScore);
+		scoreView.setText(score + "/" + curChemicalSubset.size());
 	}
 	
 	void setUiToQuestion(Question q){
 		imageView.setImageDrawable(q.image);
 		for(int i = 0; i < buttons.size(); i++){
+			buttons.get(i).getBackground().clearColorFilter();
 			buttons.get(i).setText(q.buttonLabels.get(i));
 		}
-		TextView scoreView = (TextView) findViewById(R.id.gameScore);
-		scoreView.setText(score + "/10");
 	}
 	
 	ArrayList<String> getQuestionNames(int i){
 		Chemical correct = curChemicalSubset.get(i);
         ArrayList<Chemical> incorrectChemicals = getThreeIncorrectChemicals(i);
-        int buttonToPutCorrect = new Random().nextInt(4);
+        curCorrectButton = new Random().nextInt(4);
         ArrayList<String> ret = new ArrayList<String>();
         int k = 0;
         for (int j = 0; j < 4; j++) {
-                if (j == buttonToPutCorrect)
+                if (j == curCorrectButton)
                 	ret.add(correct.getName());
                 else {
                 	ret.add(incorrectChemicals.get(k).getName());
@@ -146,7 +188,7 @@ public class GameViewActivity extends Activity {
 		alertDialogBuilder.setTitle("Game Over");
 
 		alertDialogBuilder
-			.setMessage("This subset quiz is over. Your score was " + score + " out of 10.")
+			.setMessage("This subset quiz is over. Your score was " + score + " out of "+ curChemicalSubset.size() +".")
 			.setCancelable(false)
 			.setPositiveButton("OK",new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog,int id) {
@@ -168,12 +210,6 @@ public class GameViewActivity extends Activity {
 			ret.add(jumble.get(i));
 		}
 		return ret;
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.game_view, menu);
-		return true;
 	}
 
 	ArrayList<Integer> randomNumbers(int max, int size) {
@@ -207,12 +243,8 @@ public class GameViewActivity extends Activity {
 				InputStream input = connection.getInputStream();
 				x = BitmapFactory.decodeStream(input);
 				
-				ArrayList<String> buttonVals = new ArrayList<String>();
-				
-				return new Question(new BitmapDrawable(GameViewActivity.this.getResources(),
-						x),
-						getQuestionNames(i[1])
-						);
+				return new Question(new BitmapDrawable(GameViewActivity.this.getResources(), x),
+						getQuestionNames(i[0]));
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
@@ -221,7 +253,6 @@ public class GameViewActivity extends Activity {
 		
 		@Override
 		protected void onPostExecute(Question q) {
-			score++;
 			setUiToQuestion(q);
 		}
 		

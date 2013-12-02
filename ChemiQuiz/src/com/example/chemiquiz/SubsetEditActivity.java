@@ -38,6 +38,8 @@ public class SubsetEditActivity extends Activity {
         Bundle extras = getIntent().getExtras();
         curChemicalSubsetID = extras.getInt("com.exmaple.chemiquiz.EditingSubsetID");
         final ChemicalSubset cur = SubsetViewActivity.subsets.get(curChemicalSubsetID);
+        
+        setTitle(cur.getName());
 
         final ListView listview = (ListView) findViewById(R.id.subsetEditChemicalList);
         
