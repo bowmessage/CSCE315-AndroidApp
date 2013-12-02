@@ -8,7 +8,8 @@ import java.util.Collections;
 import java.util.Random;
 
 import android.app.Activity;
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -17,9 +18,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class GameViewActivity extends Activity {
@@ -28,6 +32,11 @@ public class GameViewActivity extends Activity {
 
 	ImageView imageView;
 	ArrayList<Button> buttons;
+	Drawable imageBuffer;
+	
+	int curQuestion = 0;
+	int curCorrectButton = -1;
+	int score = 0;
 
 	// ArrayList<Integer> id_numbers;
 	// int this_id;
@@ -43,31 +52,38 @@ public class GameViewActivity extends Activity {
 		setContentView(R.layout.activity_game_view);
 
 		setupGlobals();
-
-		setUIToQuestion(0);
+		
+		new nextQuestion().executeOnExecutor(
+				AsyncTask.THREAD_POOL_EXECUTOR, 0);
 
 		setUpListeners();
 	}
 
 	void setupGlobals() {
 		imageView = (ImageView) findViewById(R.id.imageView1);
-		Button button1 = (android.widget.Button) findViewById(R.id.Button01);
-		Button button2 = (android.widget.Button) findViewById(R.id.Button02);
-		Button button3 = (android.widget.Button) findViewById(R.id.Button03);
-		Button button4 = (android.widget.Button) findViewById(R.id.Button04);
-
+		
 		buttons = new ArrayList<Button>();
-		buttons.add(button1);
-		buttons.add(button2);
-		buttons.add(button3);
-		buttons.add(button4);
+		buttons.add((Button) findViewById(R.id.Button01));
+		buttons.add((Button) findViewById(R.id.Button02));
+		buttons.add((Button) findViewById(R.id.Button03));
+		buttons.add((Button) findViewById(R.id.Button04));
 	}
 
 	void setUpListeners() {
 		
-		for(int i = 0; i < 4; i++){
+		for(int i = 0; i < buttons.size(); i++){
+			final int finalI = i;
 			Button button = buttons.get(i);
 			final CharSequence text = button.getText();
+			
+			button.setOnClickListener(new OnClickListener(){
+				@Override
+				public void onClick(View v) {
+					submitAnswer(finalI);
+				}
+			});
+			
+			
 			button.setOnLongClickListener(new OnLongClickListener() {
 				@Override
 				public boolean onLongClick(View v) {
@@ -78,22 +94,69 @@ public class GameViewActivity extends Activity {
 		}
 	}
 
-	void setUIToQuestion(int i) {
-		Chemical correct = curChemicalSubset.get(i);
-		new DrawableFromChemical().executeOnExecutor(
-				AsyncTask.THREAD_POOL_EXECUTOR, correct);
-		ArrayList<Chemical> incorrectChemicals = getThreeIncorrectChemicals(i);
-		int buttonToPutCorrect = new Random().nextInt(4);
-		buttons.get(buttonToPutCorrect).setText(correct.getName());
-		int k = 0;
-		for (int j = 0; j < 4; j++) {
-			if (j == buttonToPutCorrect)
-				continue;
-			else {
-				buttons.get(j).setText(incorrectChemicals.get(k).getName());
-				k++;
-			}
+	protected void submitAnswer(int i) {
+		if(i == curCorrectButton){
+			score++;
 		}
+		curQuestion++;
+		if(curQuestion == curChemicalSubset.size()){
+			clearUI();
+			showScorePopup();
+		}
+		else{
+			new nextQuestion().executeOnExecutor(
+					AsyncTask.THREAD_POOL_EXECUTOR, curQuestion);
+		}
+	}
+	
+	void clearUI(){
+		View sv = findViewById(R.id.scrollView1);
+		((RelativeLayout) sv.getParent()).removeView(sv);
+	}
+	
+	void setUiToQuestion(Question q){
+		imageView.setImageDrawable(q.image);
+		for(int i = 0; i < buttons.size(); i++){
+			buttons.get(i).setText(q.buttonLabels.get(i));
+		}
+		TextView scoreView = (TextView) findViewById(R.id.gameScore);
+		scoreView.setText(score + "/10");
+	}
+	
+	ArrayList<String> getQuestionNames(int i){
+		Chemical correct = curChemicalSubset.get(i);
+        ArrayList<Chemical> incorrectChemicals = getThreeIncorrectChemicals(i);
+        int buttonToPutCorrect = new Random().nextInt(4);
+        ArrayList<String> ret = new ArrayList<String>();
+        int k = 0;
+        for (int j = 0; j < 4; j++) {
+                if (j == buttonToPutCorrect)
+                	ret.add(correct.getName());
+                else {
+                	ret.add(incorrectChemicals.get(k).getName());
+                	k++;
+                }
+        }
+        return ret;
+	}
+	
+	void showScorePopup(){
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(GameViewActivity.this);
+        
+		alertDialogBuilder.setTitle("Game Over");
+
+		alertDialogBuilder
+			.setMessage("This subset quiz is over. Your score was " + score + " out of 10.")
+			.setCancelable(false)
+			.setPositiveButton("OK",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					finish();
+				}
+			  });
+
+			AlertDialog alertDialog = alertDialogBuilder.create();
+			
+			alertDialog.show();
 	}
 
 	ArrayList<Chemical> getThreeIncorrectChemicals(int not) {
@@ -121,31 +184,46 @@ public class GameViewActivity extends Activity {
 		}
 		return ret;
 	}
-
-	class DrawableFromChemical extends AsyncTask<Chemical, Void, Drawable> {
+	class Question{
+		public Question(Drawable i, ArrayList<String> l){
+			image = i;
+			buttonLabels = l;
+		}
+		public Drawable image;
+		public ArrayList<String> buttonLabels;
+	}
+	
+	class nextQuestion extends AsyncTask<Integer, Void, Question>{
 
 		@Override
-		protected Drawable doInBackground(Chemical... params) {
+		protected Question doInBackground(Integer... i) {
 			try {
 				Bitmap x;
 				HttpURLConnection connection = (HttpURLConnection) new URL(
 						"http://www.chemspider.com/ImagesHandler.ashx?id="
-								+ params[0].getId() + "&w=300&h=300")
+								+ curChemicalSubset.get(curQuestion).getId() + "&w=500&h=500")
 						.openConnection();
 				connection.connect();
 				InputStream input = connection.getInputStream();
 				x = BitmapFactory.decodeStream(input);
-				return new BitmapDrawable(GameViewActivity.this.getResources(),
-						x);
+				
+				ArrayList<String> buttonVals = new ArrayList<String>();
+				
+				return new Question(new BitmapDrawable(GameViewActivity.this.getResources(),
+						x),
+						getQuestionNames(i[1])
+						);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
 			}
 		}
-
+		
 		@Override
-		protected void onPostExecute(Drawable res) {
-			imageView.setImageDrawable(res);
+		protected void onPostExecute(Question q) {
+			score++;
+			setUiToQuestion(q);
 		}
+		
 	}
 }
